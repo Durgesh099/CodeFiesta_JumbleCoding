@@ -79,7 +79,7 @@ exports.submitAnswers = async (req, res) => {
       return res.status(404).json({ error: 'Player not found' }); 
     } 
 
-    let timeTaken = 180 - time;
+    let timeTaken = 120 - time;
 
     player.sequenceAnswers.push({
       questionId,
@@ -94,7 +94,7 @@ exports.submitAnswers = async (req, res) => {
         q1:player.sequenceAnswers[0].isCorrect,
         q2:player.sequenceAnswers[1].isCorrect,
         q3:player.sequenceAnswers[2].isCorrect,
-        duration:player.sequenceAnswers[0].timeTaken+player.sequenceAnswers[1].timeTaken+player.sequenceAnswers[2].timeTaken
+        duration:player.sequenceAnswers[0].timeTaken + player.sequenceAnswers[1].timeTaken + player.sequenceAnswers[2].timeTaken
       })
     }
     await player.save();

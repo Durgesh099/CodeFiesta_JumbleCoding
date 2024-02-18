@@ -25,7 +25,8 @@ const PlayerSchema = new mongoose.Schema({
         },
         timeTaken: {
             type: Number,
-            required: true
+            required: true,
+            default: null
         }
     }],
     result:[{
