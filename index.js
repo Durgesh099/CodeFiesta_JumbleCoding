@@ -16,7 +16,7 @@ const gameRoutes = require('./routes/game');
 app.use('/api/',gameRoutes);
 
 app.listen(PORT, () =>{
-    console.log('Server is running at port ${PORT}');
+    console.log('Server is running at port');
 });
 
 
