@@ -21,7 +21,7 @@ const verifyToken = (req, res, next) => {
     } 
 };
 
-router.get('/top-players',verifyToken,gameController.getTopPlayers);
+router.get('/top-players',gameController.getTopPlayers);
 router.post('/submit-answers',verifyToken,gameController.submitAnswers)
 router.post('/start-game',gameController.startGame);
 

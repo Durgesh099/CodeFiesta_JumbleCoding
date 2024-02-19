@@ -8,13 +8,21 @@ const secretKey = 'your_secret_key';
 // Fetch questions 
 exports.getTopPlayers = async (req, res) => { 
   try { 
-    const topPlayers = await Player.find({
+    const topPlayers1 = await Player.find({
       'result.q1': true,
       'result.q2': true,
       'result.q3': true,
     }).sort({'results.duration':1}).limit(5);
 
-    res.status(200).json({top:topPlayers});
+    const topPlayers2 = await Player.find({
+      $or: [
+        { 'result.q1': true, 'result.q2': true, 'result.q3': false },
+        { 'result.q1': true, 'result.q2': false, 'result.q3': true },
+        { 'result.q1': false, 'result.q2': true, 'result.q3': true },
+      ],
+    }).sort({'results.duration':1}).limit(5);
+
+    res.status(200).json({top1:topPlayers1, top2:topPlayers2});
   }catch (err) { 
     res.status(500).json({ error: err.message }); 
   }
