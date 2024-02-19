@@ -6,31 +6,15 @@ const Question = require('../models/questions')
 const secretKey = 'your_secret_key'; 
  
 // Fetch questions 
-exports.getQuestions = async (req, res) => { 
+exports.getTopPlayers = async (req, res) => { 
   try { 
-    const playerId = req.playerId; 
- 
-    // Fetch player record 
-    const player = await Player.findById(playerId); 
-    if (!player) { 
-      return res.status(404).json({ error: 'Player not found' }); 
-    } 
- 
-    // Get the progress index to fetch the next question 
-    const progressIndex = player.progress; 
- 
-    // Fetch the next question 
-    const question = await Question.findOne().skip(progressIndex).exec(); 
-    if (!question) { 
-      // No more questions, you can handle this case as needed 
-      return res.json({ message: 'No more questions' }); 
-    } 
- 
-    // Increment the progress index for the next request 
-    player.progress += 1; 
-    await player.save(); 
- 
-    res.json({ question }); 
+    const topPlayers = await Player.find({
+      'result.q1': true,
+      'result.q2': true,
+      'result.q3': true,
+    }).sort({'results.duration':1}).limit(5);
+
+    res.status(200).json({top:topPlayers});
   }catch (err) { 
     res.status(500).json({ error: err.message }); 
   }
@@ -79,7 +63,7 @@ exports.submitAnswers = async (req, res) => {
       return res.status(404).json({ error: 'Player not found' }); 
     } 
 
-    let timeTaken = 120 - time;
+    let timeTaken = 180 - time;
 
     player.sequenceAnswers.push({
       questionId,
