@@ -12,7 +12,7 @@ exports.getTopPlayers = async (req, res) => {
       'result.q1': true,
       'result.q2': true,
       'result.q3': true,
-    }).sort({'results.duration':1}).limit(5);
+    }).sort({'result.duration':1}).limit(5);
 
     const topPlayers2 = await Player.find({
       $or: [
@@ -20,7 +20,7 @@ exports.getTopPlayers = async (req, res) => {
         { 'result.q1': true, 'result.q2': false, 'result.q3': true },
         { 'result.q1': false, 'result.q2': true, 'result.q3': true },
       ],
-    }).sort({'results.duration':1}).limit(5);
+    }).sort({'result.duration':1}).limit(5);
 
     res.status(200).json({top1:topPlayers1, top2:topPlayers2});
   }catch (err) { 
@@ -34,13 +34,24 @@ exports.startGame = async (req, res) => {
     const { email } = req.body; 
 
     if(await Player.findOne({email:email}) ){
-      return res.status(200).json({message:"Player exists"});
+          const BearerToken = req.headers['authorization'];
+          const token = BearerToken.slice(7);
+          if (!token) { 
+              return res.status(401).json({ message: 'Unauthorized' }); 
+          } 
+          try{ 
+              const decoded = jwt.verify(token, secretKey); 
+              req.playerId = decoded.playerId; 
+              return res.status(200).json({message:"Player exists"});
+          }catch (err) { 
+              return res.status(403).json({ message: 'Invalid token' }); 
+          } 
     }
 
     const player = await Player.create({ email, startTime: new Date() }); 
  
     // Create JWT token 
-    const token = jwt.sign({ playerId: player._id }, secretKey, { expiresIn: '16m' }); // Expires in 16 minutes 
+    const token = jwt.sign({ playerId: player._id }, secretKey, { expiresIn: '15m' }); // Expires in 10 minutes 
  
     res.cookie('jwt_token', token, { httpOnly: true }); 
     res.status(201).json({ playerId: player._id, message:'Candidate Registered!', token:token}); 
