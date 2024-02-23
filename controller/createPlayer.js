@@ -51,7 +51,7 @@ exports.startGame = async (req, res) => {
     const player = await Player.create({ email, startTime: new Date() }); 
  
     // Create JWT token 
-    const token = jwt.sign({ playerId: player._id }, secretKey, { expiresIn: '15m' }); // Expires in 10 minutes 
+    const token = jwt.sign({ playerId: player._id }, secretKey, { expiresIn: '20m' }); // Expires in 10 minutes 
  
     res.cookie('jwt_token', token, { httpOnly: true }); 
     res.status(201).json({ playerId: player._id, message:'Candidate Registered!', token:token}); 
